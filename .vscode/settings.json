@@ -33,6 +33,7 @@
     "*.synctex.gz": true,
     "*.synctex.gz(busy)": true,
     "*.pdfsync": true,
+    ".chktexrc": true,
     "node_modules": true
   }
 }
