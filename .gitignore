@@ -1,10 +1,12 @@
 ## vs code
 node_modules/
+sub_modules/
 thesis.pdf
 main.pdf
 bf.pdf
 ijcai18.pdf
 *.tmp
+package-lock.json
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

@@ -175,7 +175,7 @@ TabSize = 4
 
 CmdLine
 {
-
+    -n 21
 }
 
 #####################################################################
@@ -385,6 +385,8 @@ Silent
 
     \addlinespace \cr \fill \frontmatter
     \toprule \midrule \bottomrule
+
+    \coverpage \abstractpage
 
 }[
 # Here you can put regular expressions to match Silent macros.  It was

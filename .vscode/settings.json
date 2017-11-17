@@ -22,10 +22,14 @@
     "*.glo": true,
     "*.idx": true,
     "thesis.pdf": true,
+    "package.json": true,
+    "package-lock.json": true,
     "*(busy)*": true,
     "main.pdf": true,
+    "bufan.pdf": true,
     "ijcai18.pdf": true,
     "bf.pdf": true,
+    ".gitmodules": true,
     "*.vscodeLog": true,
     ".gitignore": true,
     ".vscode": true,
@@ -35,6 +39,7 @@
     "*.synctex.gz(busy)": true,
     "*.pdfsync": true,
     ".chktexrc": true,
-    "node_modules": true
+    "node_modules": true,
+    "sub_modules": true
   }
 }
