@@ -22,6 +22,7 @@
     "*.glo": true,
     "*.idx": true,
     "thesis.pdf": true,
+    "*(busy)*": true,
     "main.pdf": true,
     "ijcai18.pdf": true,
     "bf.pdf": true,

@@ -1,1 +1,25 @@
 \section{SOAE}\label{sec:soae}
+
+First we recall what a SOM is.
+Then we extend the formulation to the deep learning context.
+At last,
+we compare the deep version of SOM with VAE\@.
+
+\subsection{Self-Organizing Map}
+
+Self-organizing maps often comes with two formulations:
+one is the original incremental algorithm;
+the other is a batch version.
+We use the original incremental version.
+
+First define a set of latent nodes
+\( \cZ=\{z_1,\dots,z_M\} \)
+on a two-dimensional plane.
+Typically,
+points in \( \cZ \) are chosen to form a rectangular or hexagonal lattice.
+The distances between latent nodes are used to define neighborhoods
+through a \emph{neighborhood function} \( h_{z'}(z) \).
+Each latent node \( z_i \) is related to data space by a \emph{reference vector}
+\( m_i\in\cX \).
+Reference vectors can be initialized randomly,
+and refined by the algorithm.
