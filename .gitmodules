@@ -1,0 +1,4 @@
+[submodule "sub_modules/texvscode"]
+	path = sub_modules/texvscode
+	url = https://github.com/innerlee/texvscode.git
+	branch = master
