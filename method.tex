@@ -18,8 +18,40 @@ on a two-dimensional plane.
 Typically,
 points in \( \cZ \) are chosen to form a rectangular or hexagonal lattice.
 The distances between latent nodes are used to define neighborhoods
-through a \emph{neighborhood function} \( h_{z'}(z) \).
+through a \emph{neighborhood function} \( h_{z'z}(t) \).
 Each latent node \( z_i \) is related to data space by a \emph{reference vector}
 \( m_i\in\cX \).
-Reference vectors can be initialized randomly,
-and refined by the algorithm.
+Reference vectors are initialized first,
+and then refined by the procedure below.
+
+\begin{algorithm}[tb]
+    \caption{SOM~\cite{kohonen1982self, kohonen1998self}}\label{alg:example}
+ \begin{algorithmic}
+    \STATE {\bfseries Input:}
+        latent nodes \(\cZ\),
+        data space \(\cX\),
+        neighborhood function \(h_{z'z}(t)\),
+        learning rate function \(\alpha(t)\),
+        max iteration \(T\)
+    \STATE Initialize reference vectors \(m_i\in\cX\) for each \(z_i\in\cZ\)
+    \FOR{\(t=1\) {\bfseries to} \(T\)}
+    \STATE Sample \(x\in\cX\)
+    \STATE Find \emph{best matching node} \(m_c\),
+        where
+        \begin{equation}
+            c = \argmin_i \big\{\|x-m_i\|\big\}
+        \end{equation}
+    \STATE Update reference vectors
+        \begin{equation}
+            m_i \leftarrow m_i + \alpha(t)h_{z_c z_i}(t)\big(x-m_i\big),\quad\forall i
+        \end{equation}
+    \ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+The neighborhood kernel can use the Gaussian function,
+\begin{equation}
+    h_{z'z}(t) = e^{-\frac{\|z' - z\|^2}{2\sigma^2(t)}},
+\end{equation}
+where \(\sigma(t)\) defines the width of the neighborhood kernel.
+Both \(\alpha(t)\) and \(\sigma(t)\) are monotonically decreasing functions of time.
