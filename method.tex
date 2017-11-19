@@ -18,22 +18,22 @@ on a two-dimensional plane.
 Typically,
 points in \( \cZ \) are chosen to form a rectangular or hexagonal lattice.
 The distances between latent nodes are used to define neighborhoods
-through a \emph{neighborhood function} \( h_{z'z}(t) \).
+through a \emph{neighborhood function} \( h_t(z',z) \).
 Each latent node \( z_i \) is related to data space by a \emph{reference vector}
 \( m_i\in\cX \).
 Reference vectors are initialized first,
-and then refined by the procedure below.
+and then refined by the Algorithm~\ref{alg:som}.
 
 \begin{algorithm}[tb]
-    \caption{SOM~\cite{kohonen1982self, kohonen1998self}}\label{alg:example}
+    \caption{SOM~\cite{kohonen1982self, kohonen1998self}}\label{alg:som}
  \begin{algorithmic}
     \STATE {\bfseries Input:}
-        latent nodes \(\cZ\),
-        data space \(\cX\),
-        neighborhood function \(h_{z'z}(t)\),
-        learning rate function \(\alpha(t)\),
-        max iteration \(T\)
-    \STATE Initialize reference vectors \(m_i\in\cX\) for each \(z_i\in\cZ\)
+        latent nodes \(\cZ\subset\real^2\),
+        data space \(\cX\subset\real^n\),
+        learning rate \(\alpha_t\),
+        neighborhood function \(h_t(z',z)\),
+        max iteration time \(T\)
+    \STATE Initialize reference vectors \(m_i\in\real^n\) for each \(z_i\in\cZ\)
     \FOR{\(t=1\) {\bfseries to} \(T\)}
     \STATE Sample \(x\in\cX\)
     \STATE Find \emph{best matching node} \(m_c\),
@@ -42,8 +42,8 @@ and then refined by the procedure below.
             c = \argmin_i \big\{\|x-m_i\|\big\}
         \end{equation}
     \STATE Update reference vectors
-        \begin{equation}
-            m_i \leftarrow m_i + \alpha(t)h_{z_c z_i}(t)\big(x-m_i\big),\quad\forall i
+        \begin{equation}\label{eq:som_update}
+            m_i \leftarrow m_i + \alpha_t h_t(z_c,z_i)\big(x-m_i\big),\quad\forall i
         \end{equation}
     \ENDFOR
 \end{algorithmic}
@@ -51,7 +51,85 @@ and then refined by the procedure below.
 
 The neighborhood kernel can use the Gaussian function,
 \begin{equation}
-    h_{z'z}(t) = e^{-\frac{\|z' - z\|^2}{2\sigma^2(t)}},
+    h_t(z',z) = e^{-\frac{\|z' - z\|^2}{2\sigma^2(t)}},
 \end{equation}
-where \(\sigma(t)\) defines the width of the neighborhood kernel.
-Both \(\alpha(t)\) and \(\sigma(t)\) are monotonically decreasing functions of time.
+where \(t\) is iteration time,
+and \(\sigma(t)\) defines the width of the neighborhood kernel.
+Both the learning rate \(\alpha_t\) and \(\sigma(t)\) are monotonically decreasing functions of time.
+
+Note that the update rule~\eqref{eq:som_update} is a step to optimize the loss
+\begin{equation}
+    \min_{m_i} \frac{1}{2}h_t(z_c,z_i)\|x-m_i\|^2.
+\end{equation}
+
+\subsection{Deep Version}
+
+Changes are,
+
+\begin{itemize}
+    \item Discrete two-dimensional latent nodes become a continuous latent space \(\cZ\subset\real^m\) with dimension \(m\).
+    \item Difference between two points in data space \(\cX\) can be measured by any given distance function \(d(\cdot,\cdot)\),
+        \eg, the distance induced by the L1/L2 norm.
+    \item Reference vector of a latent vector \(z\in\cZ\) is represented by a deep network \(G\), \ie, \(G(z)\in\real^n\).
+    \item The best matching node for \(x\in\cX\) is represented by another network \(C\).
+        Given a sample \(x\),
+        the best matching node is \(C(x)\).
+        The loss for \(C\) is,
+        \begin{equation}\label{eq:soae_c}
+            \min_C d(x, G(C(x))),
+        \end{equation}
+        where the network \(G\) for reference vectors is fixed.
+    \item For any given \(z'\in\cZ\) and iteration \(t\),
+        the integration of the neighborhood function \(h_t(z',z)\) over the latent space \(\cZ\) is required to be \(1\),
+        and we call it the \emph{neighborhood kernel}.
+        \begin{equation}
+            \int_\cZ h_t(z',z)dz = 1.
+        \end{equation}
+    \item At step \(t\), the update rule~\eqref{eq:som_update} now becomes a single optimization step of \(G\) for the objective,
+        \begin{equation}\label{eq:deep_update}
+            \min_G \int_{\cZ}h_t(C(x), z)d(x, G(z))dz.
+        \end{equation}
+\end{itemize}
+
+The update step in~\eqref{eq:deep_update} contains an integration over the latent space.
+For given \(C\), \(x\), and \(t\),
+treat \(h_t(C(x), \cdot)\) as a probability distribution over \(\cZ\).
+Rewrite the integration as an expectation,
+we have
+\begin{equation}\label{eq:soae_update}
+    \min_G \Ebb_{z\sim h_t(C(x), \cdot)}\big[d(x, G(z))\big].
+\end{equation}
+Then we can optimize this approximately by sampling some finite number of latent vectors.
+For example,
+in the case of sampling only one point \(z\),
+the objective is,
+\begin{equation}\label{eq:soae_update_one}
+    \min_G d(x, G(z)).
+\end{equation}
+We summarize the procedure in Algorithm~\ref{alg:soae}.
+
+\begin{algorithm}[tb]
+    \caption{SOAE}\label{alg:soae}
+ \begin{algorithmic}
+    \STATE {\bfseries Input:}
+        latent space \(\cZ\subset\real^m\),
+        data space \(\cX\subset\real^n\),
+        neighborhood kernel \(h_t(z',z)\),
+        max iteration time \(T\),
+        \(C\) iteration time \(T_1\),
+        \(G\) iteration time \(T_2\)
+    \STATE Initialize network \(G\), \(C\)
+    \FOR{\(t=1\) {\bfseries to} \(T\)}
+    \FOR{\(t_1=1\) {\bfseries to} \(T_1\)}
+        \STATE Sample \(x\in\cX\)
+        \STATE Update \(C\) with loss~\eqref{eq:soae_c}.
+    \ENDFOR
+    \FOR{\(t_2=1\) {\bfseries to} \(T_2\)}
+        \STATE Sample \(z\sim h_t(C(x), \cdot)\)
+        \STATE Update \(G\) with loss~\eqref{eq:soae_update_one}.
+    \ENDFOR
+    \ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Relation to Autoencoder}

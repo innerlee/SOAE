@@ -1,1 +1,25 @@
 \section{Experiment}\label{sec:exp}
+
+\subsection{Latent Space Reularization}
+
+When latent dimension is low,
+the norm of random latent vectors varies much.
+This might has side effect for numerical reasons.
+To workaround this,
+we propose a \emph{torus-embedding mapping} and \emph{sphere-embedding mapping}
+to make sure the embedded vectors share the same norm.
+
+\subsubsection{Torus-Embedding Mapping}
+
+\emph{Torus-embedding mapping} \(T:\real^m\to\real^{2m}\) brings latent vectors to a torus,
+\begin{equation}
+    T(z) = (\cos z, \sin z).
+\end{equation}
+Operations are done in element-wise.
+
+\subsubsection{Sphere-Embedding Mapping}
+
+\emph{Sphere-embedding mapping} \(S:\real^m\backslash\{0\}\to\real^{m}\) brings latent vectors to a unit sphere,
+\begin{equation}
+    S(z) = \frac{z}{\|z\|}.
+\end{equation}
