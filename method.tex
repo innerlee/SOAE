@@ -33,6 +33,7 @@ and then refined by the Algorithm~\ref{alg:som}.
         learning rate \(\alpha_t\),
         neighborhood function \(h_t(z',z)\),
         max iteration time \(T\)
+    \STATE
     \STATE Initialize reference vectors \(m_i\in\real^n\) for each \(z_i\in\cZ\)
     \FOR{\(t=1\) {\bfseries to} \(T\)}
     \STATE Sample \(x\in\cX\)
@@ -118,6 +119,7 @@ We summarize the procedure in Algorithm~\ref{alg:soae}.
         max iteration time \(T\),
         \(C\) iteration time \(T_1\),
         \(G\) iteration time \(T_2\)
+    \STATE
     \STATE Initialize network \(G\), \(C\)
     \FOR{\(t=1\) {\bfseries to} \(T\)}
     \FOR{\(t_1=1\) {\bfseries to} \(T_1\)}
@@ -133,3 +135,10 @@ We summarize the procedure in Algorithm~\ref{alg:soae}.
 \end{algorithm}
 
 \subsection{Relation to Autoencoder}
+
+In the context of autoencoder,
+\(G\) is the decoder,
+and \(C\) is the encoder.
+Equation~\eqref{eq:soae_c} is like the autoencoder loss.
+Equation~\eqref{eq:soae_update_one} is like the variational autoencoder without the reparametrization trick and the kl-divergence loss.
+The training is like wake-sleep algorithm.
