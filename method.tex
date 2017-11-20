@@ -65,6 +65,8 @@ Note that the update rule~\eqref{eq:som_update} is a step to optimize the loss
 
 \subsection{Deep Version}
 
+The original SOM is a shallow neural network.
+We propose a deep version.
 Changes are,
 
 \begin{itemize}
@@ -140,5 +142,20 @@ In the context of autoencoder,
 \(G\) is the decoder,
 and \(C\) is the encoder.
 Equation~\eqref{eq:soae_c} is like the autoencoder loss.
-Equation~\eqref{eq:soae_update_one} is like the variational autoencoder without the reparametrization trick and the kl-divergence loss.
-The training is like wake-sleep algorithm.
+When training \(G\),
+the sampling of \(z\sim h_t(C(x), \cdot)\) is like the variational autoencoder~\cite{kingma2013auto}.
+However,
+we no not need the reparametrization trick because the gradient of \(z\) need not to propagate to network \(C\).
+The kl-divergence loss counterpart for regularizing conditional distribution \(P(z|x)\) is absent from loss here,
+because the neighborhood kernel took its place.
+It also resembles denoising autoencoder~\cite{vincent2008extracting},
+albeit denoising the latent space rather than the data space.
+The training is like wake-sleep algorithm~\cite{hinton1995wake}.
+
+In summary,
+from the algorithmic view,
+SOAE is like training an encoder \(C\) and decoder \(G\) using the wake-sleep algorithm.
+During the wake pass, \ie, training of \(G\),
+it resembles a VAE\@;
+while in the sleep pass, \ie, training of \(C\),
+it is like a normal autoencoder.
