@@ -74,14 +74,13 @@ Changes are,
     \item Difference between two points in data space \(\cX\) can be measured by any given distance function \(d(\cdot,\cdot)\),
         \eg, the distance induced by the L1/L2 norm.
     \item Reference vector of a latent vector \(z\in\cZ\) is represented by a deep network \(G\), \ie, \(G(z)\in\real^n\).
-    \item The best matching node for \(x\in\cX\) is represented by another network \(C\).
-        Given a sample \(x\),
-        the best matching node is \(C(x)\).
-        The loss for \(C\) is,
+    \item The best matching node is represented by another network \(C\).
+        Given a sample \(x\in\cX\),
+        the best matching node \(C(x)\) is found via minimizing the loss,
         \begin{equation}\label{eq:soae_c}
-            \min_C d(x, G(C(x))),
+            \min_C d(x, G(C(x))).
         \end{equation}
-        where the network \(G\) for reference vectors is fixed.
+        Here the network \(G\) is fixed.
     \item For any given \(z'\in\cZ\) and iteration \(t\),
         the integration of the neighborhood function \(h_t(z',z)\) over the latent space \(\cZ\) is required to be \(1\),
         and we call it the \emph{neighborhood kernel}.
